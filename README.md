@@ -6,51 +6,43 @@ Saarathi is a vehicle-aware smart mobility assistant that evaluates candidate ro
 ---
 
 ## Architecture
-- **Backend**: FastAPI + OSRM (Open Source Routing Machine) + Open-Meteo Elevation API
+- **Backend**: FastAPI + Serverless Routing + Open-Meteo Elevation API
+- **Deployment**: Vercel (Serverless Python runtime)
 - **Android App**: Kotlin + Jetpack Compose + On-Device Accelerometer Hazard Detection
-- **AI Engine**: Rule-based explainability with planned on-device QNN integration (Gemma 2B / Llama 3.2 1B via Qualcomm AI Hub)
-- **Bridge**: iQOO Office Kit for cross-device connectivity
+- **AI Engine**: Explainable Journey Reasoning engine (designed for Snapdragon NPU on-device LLMs via Qualcomm AI Hub)
 
 ---
 
-## Quick Start
+## Deploy to Vercel (1-Click)
 
-### 1. Setup & Preprocess OSRM Data
-```bash
-./setup.sh
-```
-This sets up the Python virtual environment, downloads the OpenStreetMap Karnataka extract, and runs the OSRM extraction, partition, and customization pipelines.
+1. Push your code to GitHub:
+   ```bash
+   git add .
+   git commit -m "Deploy Saarathi on Vercel"
+   git push origin main
+   ```
+2. Go to **[vercel.com/new](https://vercel.com/new)**.
+3. Import your GitHub repository: `mohithkinthada2006-crypto/SAARATHI`.
+4. Click **Deploy**.
 
-### 2. Deploy Services
-```bash
-./deploy.sh
-```
-This spins up the OSRM container on port `5000` and the Saarathi FastAPI backend on port `8000`.
-
-### 3. Configure Android App
-Update `BASE_URL` in `android/app/src/main/java/com/saarathi/app/data/ApiService.kt` to your laptop's LAN IP (e.g. `http://192.168.1.100:8000/`) or `http://10.0.2.2:8000/` if using the Android Emulator.
-
-### 4. Build and Install on Phone
-```bash
-./scripts/deploy_phone.sh
-```
+Your API will be live at `https://<your-project>.vercel.app`.
 
 ---
 
-## Demo Coordinates (Bengaluru)
-- **Start (MG Road)**: `12.9756, 77.6068`
-- **End (Koramangala)**: `12.9352, 77.6244`
+## API Endpoints
+- `GET /health` → `{"status": "ok", "service": "saarathi"}`
+- `POST /compare` → Evaluates and scores alternative routes based on vehicle type and battery headroom.
 
 ---
 
-## Vehicle Scoring Factors
+## Android App Setup
+Update `BASE_URL` in `android/app/src/main/java/com/saarathi/app/data/ApiService.kt` to your Vercel deployment URL:
+```kotlin
+const val BASE_URL = "https://<your-project>.vercel.app/"
+```
 
-| Factor | Bike Weight | Car Weight | EV Weight |
-|---|---|---|---|
-| **Efficiency (Duration)** | 20% | 27% | 18% |
-| **Road Quality & Smoothness** | 28% | 20% | 12% |
-| **Vehicle Match & Dimensions** | 17% | 20% | 12% |
-| **Hazard & Safety Risk** | 22% | 15% | 10% |
-| **Elevation & Gradients** | 8% | 8% | 18% |
-| **Energy & Battery Security** | 5% | 10% | 30% |
-| **Total** | **100%** | **100%** | **100%** |
+Build and run on your device:
+```bash
+cd android
+./gradlew installDebug
+```

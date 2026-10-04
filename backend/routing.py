@@ -7,7 +7,8 @@ import os
 from typing import Dict, Any, List
 import httpx
 
-OSRM_URL = os.getenv("OSRM_URL", "http://localhost:5000")
+# Default to public OSRM demo server for Vercel serverless deployment if no private instance is provided
+OSRM_URL = os.getenv("OSRM_URL", "https://router.project-osrm.org")
 
 
 async def fetch_candidate_routes(
@@ -24,22 +25,21 @@ async def fetch_candidate_routes(
     coords = f"{start_lon:.6f},{start_lat:.6f};{end_lon:.6f},{end_lat:.6f}"
     url = f"{OSRM_URL.rstrip('/')}/route/v1/driving/{coords}"
     params = {
-        "alternatives": str(alternatives),
+        "alternatives": "true" if alternatives > 1 else "false",
         "overview": "full",
         "geometries": "geojson",
         "steps": "false",
     }
 
     try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
+        async with httpx.AsyncClient(timeout=10.0) as client:
             response = await client.get(url, params=params)
             if response.status_code == 200:
                 data = response.json()
                 if data.get("code") == "Ok" and data.get("routes"):
                     return data
     except Exception:
-        # If OSRM server is not running or unreachable during initial offline tests,
-        # generate realistic fallback routes so the full pipeline can still be demonstrated/tested.
+        # If external OSRM is unreachable or timed out, fallback to simulated deterministic routes
         pass
 
     return _generate_fallback_routes(start_lon, start_lat, end_lon, end_lat)
@@ -50,7 +50,7 @@ def _generate_fallback_routes(
 ) -> Dict[str, Any]:
     """
     Deterministic simulated routes between start and end coordinates
-    when OSRM backend container is initializing or running in standalone mode.
+    when running in standalone / serverless mode.
     """
     routes = []
     base_dist = 6800.0  # meters
