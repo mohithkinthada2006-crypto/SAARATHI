@@ -1,0 +1,12 @@
+FROM osrm/osrm-backend
+WORKDIR /data
+# Map files must be downloaded from cloud storage at build time.
+# Replace the URLs below with actual public URLs after uploading
+# the .osrm, .osrm.partition, and .osrm.mldgr files.
+RUN wget -O karnataka-latest.osrm "https://YOUR_STORAGE/karnataka-latest.osrm" && \
+    wget -O karnataka-latest.osrm.partition "https://YOUR_STORAGE/karnataka-latest.osrm.partition" && \
+    wget -O karnataka-latest.osrm.mldgr "https://YOUR_STORAGE/karnataka-latest.osrm.mldgr" && \
+    wget -O karnataka-latest.osrm.cell_metrics "https://YOUR_STORAGE/karnataka-latest.osrm.cell_metrics" && \
+    wget -O karnataka-latest.osrm.cells "https://YOUR_STORAGE/karnataka-latest.osrm.cells"
+EXPOSE 5000
+CMD ["osrm-routed", "--algorithm", "mld", "/data/karnataka-latest.osrm"]

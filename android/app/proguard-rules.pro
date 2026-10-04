@@ -1,0 +1,1 @@
+# Saarathi proguard rules

@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  osrm:
+    image: osrm/osrm-backend
+    container_name: saarathi-osrm
+    ports: ["5000:5000"]
+    volumes: ["./backend/osrm_data:/data"]
+    command: osrm-routed --algorithm mld /data/karnataka-latest.osrm
+    restart: unless-stopped
+  backend:
+    build: ./backend
+    container_name: saarathi-backend
+    ports: ["8000:8000"]
+    environment:
+      - OSRM_URL=http://osrm:5000
+    depends_on: [osrm]
+    restart: unless-stopped
