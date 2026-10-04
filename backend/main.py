@@ -35,6 +35,17 @@ class RouteRequest(BaseModel):
     )
 
 
+@app.get("/")
+async def root():
+    return {
+        "service": "Saarathi API",
+        "status": "online",
+        "version": "1.0.0",
+        "docs": "/docs",
+        "health": "/health"
+    }
+
+
 @app.get("/health")
 async def health_check():
     return {"status": "ok", "service": "saarathi"}

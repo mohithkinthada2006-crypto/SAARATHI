@@ -14,8 +14,8 @@ interface ApiService {
 }
 
 object ApiClient {
-    // Render production URL (switch to http://10.0.2.2:8000/ or local IP for local testing)
-    const val BASE_URL = "https://saarathi-backend.onrender.com/"
+    // Vercel Live Deployment URL
+    const val BASE_URL = "https://saarathi-nine.vercel.app/"
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BASIC
