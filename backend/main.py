@@ -438,12 +438,17 @@ async def home_ui(request: Request):
         }
 
         #map {
-            height: 340px;
+            height: 380px;
             width: 100%;
             border-radius: var(--radius-lg);
             border: 1px solid var(--border);
             z-index: 1;
-            background: #111;
+            background: #0d1118;
+        }
+
+        /* 100% Free OpenStreetMap with high-contrast sleek Dark Mode filter - No API Key Needed */
+        .leaflet-tile {
+            filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.2) brightness(0.7);
         }
 
         /* Hero Recommendation Box */
@@ -750,11 +755,11 @@ async def home_ui(request: Request):
         let currentBattery = 100;
         let map, routeLayers = [];
 
-        // Initialize Dark Tile Map
+        // Initialize Dark Tile Map (No API Key Required)
         function initMap() {
             map = L.map('map', { zoomControl: true }).setView([12.9554, 77.6156], 13);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; OpenStreetMap & CartoDB',
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
                 maxZoom: 19
             }).addTo(map);
         }
